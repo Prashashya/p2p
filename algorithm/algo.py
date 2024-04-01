@@ -50,6 +50,8 @@ def algo():
     df['Rating_pref']=round(df['Rating_pref'],1)
     df['DSM'] = round(df['DSM'],0)
     df.to_csv('df.csv', index=False)
+    # Find max_id
+    max_id = df['Prosumer_Id'].max()
     #df
 
     """## Creating Bus"""
@@ -74,6 +76,8 @@ def algo():
         bus_df = pd.DataFrame(bus_data)
 
         return bus_df
+    
+    line_data_df = line_data_df[(line_data_df['From'] <= max_id) & (line_data_df['To'] <= max_id)]
 
     linedata = line_data_df.to_numpy()
     BMva = 1e5  # Base VA
@@ -373,8 +377,8 @@ def algo():
                 flag = False
 
                 #LIMITS CHECKING
-                for i in range(10):
-                    for j in range(10):
+                for i in range(max_id):
+                    for j in range(max_id):
                         if( (i<j) and (limits[i][j] - max(np.abs(Pij[i][j]),np.abs(Pij[j][i])) < 0) or (check == False)):
                             rejected.append((buyer,seller))
                             utility_matrix.loc[seller, buyer] = 0
@@ -433,8 +437,8 @@ def algo():
                     Lij,Sij,Pij,Qij,Pg,Qg, Pi, Qi, Iij, Pl = power_flow.powerflow(V, np.deg2rad(Del), BMva)
 
 
-                    for i in range(10):
-                        for j in range(10):
+                    for i in range(max_id):
+                        for j in range(max_id):
                             if((i<j) and (limits[i][j] - max(np.abs(Pij[i][j]),np.abs(Pij[j][i])) < 0) or (check == False)):
                                 rejected.append((buyer,seller))
                                 utility_matrix.loc[seller, buyer] = 0
@@ -492,6 +496,6 @@ def algo():
 
     result_transactions.to_csv('result_transactions.csv', index=False)
     result_transactions
-
+    
     result_transactions['Trading Energy'].sum()
 

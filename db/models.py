@@ -35,15 +35,15 @@ energy_table = db.Table(
 
 meta.create_all(engine)
 
-# if not read(user_table, "admin"):
-#     insert(user_table, {"username": "admin", "password": "admin", "email": "admin@gmail.com"})
+if not read(user_table, "admin"):
+    insert(user_table, {"username": "admin", "password": "admin", "email": "admin@gmail.com"})
 
-# r = read(energy_table, None)
-# print(r)
+r = read(energy_table, None)
+print(r)
 
-# if not r:
-#     with open("solar_data.csv") as csvfile:
-#         line = csv.reader(csvfile)
-#         for i in line:
-#             if i[1] != "Solar":
-#                 insert(energy_table, {"Prosumer_Id": i[0], "Solar": i[1]})
+if not r:
+    with open("solar_data.csv") as csvfile:
+        line = csv.reader(csvfile)
+        for i in line:
+            if i[1] != "Solar":
+                insert(energy_table, {"Prosumer_Id": i[0], "Solar": i[1]})

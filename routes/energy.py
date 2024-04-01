@@ -61,8 +61,15 @@ def run_algo():
         outcsv = csv.writer(out_file)
         outcsv.writerow(["Prosumer_Id", "username", "Storage", "Load Forecast (Units)", "Profit_pref", "Rating_pref", "Solar", "Total (Units)", "Period (Hr)", "Unit Price", "DSM"])
         for rows in read_energy:
-            unit = unit_price.unit_price(float(rows[3]))
-            outcsv.writerow(tuple(rows) + (1, ) + (unit, ) + (0,))
+            if not None in rows:
+                unit = unit_price.unit_price(float(rows[3]))
+                outcsv.writerow(tuple(rows) + (1, ) + (unit, ) + (0,))
+            # else:
+            #     rows = list(rows)
+            #     rows = [0 if x is None else x for x in rows]
+            #     rows[6] = 0
+            #     outcsv.writerow(tuple(rows))
+
     
     algo.algo()
 
@@ -78,4 +85,28 @@ def get_result():
         result = []
         for i in line:
             result.append(i)
-    return {"res": result}
+    return {
+        "res": result
+    }
+
+@energy_router.get("/transaction/{id}")
+def get_transaction(id: int):
+    with open("D:\\Programming\\p2p\\result_transactions.csv") as csvfile:
+        line = csv.reader(csvfile)
+        result = []
+        for i in line:
+            result.append(i)
+        
+        if id >= len(result):
+            return {
+                "status": "No transaction found"
+            }
+        if id == 0:
+            return {
+                "no": len(result) - 1
+            }
+        return {
+            "seller": result[id][1],
+            "buyer": result[id][2],
+            "trading_energy": result[id][5]
+        }

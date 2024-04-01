@@ -1,1 +1,1 @@
-export const backend_link = " https://consider-anybody-generally-contributed.trycloudflare.com"
+export const backend_link = "http://localhost:8000"
